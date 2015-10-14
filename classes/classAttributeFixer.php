@@ -97,7 +97,7 @@ EOQ;
 		$aExtraAttributeIds = $this->db->arrayQuery($findExtraParams);
 
 		$findExtraParamObjectCount = <<<EOQ
-SELECT COUNT(DISTINCT(ezco.id))) as objectCount
+SELECT COUNT(DISTINCT(ezco.id)) as objectCount
 FROM ezcontentobject_attribute ea
 INNER JOIN ezcontentobject ezco on ezco.id = ea.contentobject_id
 WHERE ezco.contentclass_id = $contentClassId
