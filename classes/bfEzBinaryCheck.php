@@ -12,14 +12,14 @@
  */
 class bfEzBinaryCheck {
 
-	public static $sVarPath = './var/ezdemo_site';
-	public static $sStorageDir = '/storage/original/application/';
+	public $sVarPath = './var/ezdemo_site';
+	public $sStorageDir = '/storage/original/application/';
 
 	function __construct() {
 		$this->sVarPath = eZINI::instance()->variable( 'FileSettings', 'VarDir' );
 	}
 
-	static function getEzBinaryRows() {
+	public function getEzBinaryRows() {
 
 		$db = eZDb::instance(); 
 		$aRows = array();
@@ -29,19 +29,19 @@ class bfEzBinaryCheck {
 		return $aRows;
 	}
 
-	static function report() {
-		return self::processBinaryFiles();
+	public function report() {
+		return $this->processBinaryFiles();
 	}
 
 
-	static function fix() {
-		return self::processBinaryFiles(true);
+	public function fix() {
+		return $this->processBinaryFiles(true);
 	}
 
-	private static function processBinaryFiles($confirm = false) {
+	private function processBinaryFiles($confirm = false) {
 
 		$db = eZDb :: instance();
-		$aBinaryRows = self::getEzBinaryRows();
+		$aBinaryRows = $this->getEzBinaryRows();
 		foreach($aBinaryRows as $aRow) {
 
 			$bMatch = false;
@@ -72,20 +72,20 @@ class bfEzBinaryCheck {
 			if(strlen($sRowFileExt)){ //db file extension			
 
 				//try local file no extension
-				if(file_exists(self::$sVarPath.self::$sStorageDir.$sRowFileName)) {
+				if(file_exists($this->sVarPath.$this->sStorageDir.$sRowFileName)) {
 					echo '[db +ext / file -ext -> Rename local] ';
 
 					if($confirm == true) { //rename file
-						rename(self::$sVarPath.self::$sStorageDir.$sRowFileName , self::$sVarPath.self::$sStorageDir.$sRowFileName.'.'.$sRowFileExt );
+						rename($this->sVarPath.$this->sStorageDir.$sRowFileName , $this->sVarPath.$this->sStorageDir.$sRowFileName.'.'.$sRowFileExt );
 					} else { echo '[test] '; }
-				} elseif (file_exists(self::$sVarPath.self::$sStorageDir.$sRowFileName.'.')) { //busted dot only version
+				} elseif (file_exists($this->sVarPath.$this->sStorageDir.$sRowFileName.'.')) { //busted dot only version
 					echo '[db +ext / file (.)+ext -> Rename Local] ';
 
 					if($confirm == true) { //rename file
-						rename(self::$sVarPath.self::$sStorageDir.$sRowFileName.'.' , self::$sVarPath.self::$sStorageDir.$sRowFileName.'.'.$sRowFileExt );
+						rename($this->sVarPath.$this->sStorageDir.$sRowFileName.'.' , $this->sVarPath.$this->sStorageDir.$sRowFileName.'.'.$sRowFileExt );
 					} else { echo '[test] '; }
 
-				} elseif (file_exists(self::$sVarPath.self::$sStorageDir.$sRowFileName.'.'.$sRowFileExt)) {
+				} elseif (file_exists($this->sVarPath.$this->sStorageDir.$sRowFileName.'.'.$sRowFileExt)) {
 					echo '[db +ext / file +ext -> OK] ';			
 
 				} else {
@@ -95,22 +95,22 @@ class bfEzBinaryCheck {
 			} else { //db no extension
 
 				//auto extension from mimetype
-				$sMimeExt = self::mimeToExt($aRow['mime_type']);
+				$sMimeExt = $this->mimeToExt($aRow['mime_type']);
 				
 				if(strlen( $sMimeExt ) ) { // auto extension
 					
-					if (file_exists(self::$sVarPath.self::$sStorageDir.$sRowFileName)) {
+					if (file_exists($this->sVarPath.$this->sStorageDir.$sRowFileName)) {
 						echo '[db -ext / file -ext -> Rename local -> Update db] ';	
 
 						$query_role_add_ext = "update ezbinaryfile set filename = '" .$sRowFileName.'.'.$sMimeExt. "' where filename = '" .$sRowFileName. "'";
 						echo $query_role_add_ext . " ";
 
 						if($confirm == true) { //rename file, update db
-							rename(self::$sVarPath.self::$sStorageDir.$sRowFileName , self::$sVarPath.self::$sStorageDir.$sRowFileName.'.'.$sMimeExt );
+							rename($this->sVarPath.$this->sStorageDir.$sRowFileName , $this->sVarPath.$this->sStorageDir.$sRowFileName.'.'.$sMimeExt );
 							$db->query($query_role_add_ext);
 						} else { echo '[test] '; }
 
-					} elseif (file_exists(self::$sVarPath.self::$sStorageDir.$sRowFileName.'.'.$sMimeExt)) {														
+					} elseif (file_exists($this->sVarPath.$this->sStorageDir.$sRowFileName.'.'.$sMimeExt)) {														
 						echo '[db -ext / file +ext -> Update db] ';
 						$query_role_add_ext = "update ezbinaryfile set filename = '" .$sRowFileName.'.'.$sMimeExt. "' where filename = '" .$sRowFileName. "'";
 						echo $query . " ";

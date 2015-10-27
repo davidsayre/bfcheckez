@@ -56,14 +56,14 @@ $ezp_script_env->initialize();
 // Script process
 //////////////////////////
 
-$ezBinaryFixManager = new bfEzBinaryFix();
+$ezBinaryFixManager = new bfEzBinaryCheck();
 
 if ($runrealOpt->value == "Y") {
 	echo 'Fixing real data!\n';
 	$ezBinaryFixManager->fix();
 } else {
 	$ezBinaryFixManager->report();
-	echo 'Run with "--run-for-real=Y" to really fix the issue!\n';	
+	echo 'Run with "--run-fix=Y" to really fix the issue!\n';	
 }
 
 // Avoid fatal error at the end
